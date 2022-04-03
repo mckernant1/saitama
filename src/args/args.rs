@@ -1,6 +1,8 @@
 use std::str::FromStr;
-use chrono::{Duration, Month};
-use clap::{Args, Parser, Subcommand, ArgEnum};
+use chrono::{Duration};
+use clap::{ArgEnum, Args, Parser, Subcommand};
+use log::error;
+use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -10,7 +12,7 @@ pub struct Cli {
     pub command: Commands,
 
     #[clap(flatten)]
-    pub verbose: clap_verbosity_flag::Verbosity
+    pub verbose: clap_verbosity_flag::Verbosity,
 }
 
 #[derive(Subcommand, Debug, Clone)]
@@ -27,7 +29,11 @@ pub struct Punch {
 
     /// Headers on the request
     #[clap(short = 'H', long)]
-    pub headers: Vec<String>,
+    headers: Vec<String>,
+
+    /// HTTP method
+    #[clap(short, long, arg_enum, default_value_t = Method::Get)]
+    method: Method,
 
     /// How many worker threads to start
     #[clap(short, long, default_value_t = 10)]
@@ -39,18 +45,83 @@ pub struct Punch {
 
     /// How long to run the test. Used with duration_unit
     #[clap(short, long)]
-    pub duration: u64,
+    duration: u64,
 
     /// What unit to run with the test
-    #[clap(short = 'n', long, arg_enum, default_value_t = ChronoUnit::Minute )]
-    pub duration_unit: ChronoUnit
+    #[clap(short = 'n', long, arg_enum, default_value_t = ChronoUnit::Minute)]
+    duration_unit: ChronoUnit,
 
+    /// Body of the request
+    #[clap(short, long, default_value = "")]
+    pub body: String,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ArgEnum, Debug)]
+impl Punch {
+    pub fn get_duration(&self) -> Duration {
+        match self.duration_unit {
+            ChronoUnit::Second => Duration::seconds(self.duration as i64),
+            ChronoUnit::Minute => Duration::minutes(self.duration as i64),
+            ChronoUnit::Hour => Duration::hours(self.duration as i64),
+        }
+    }
+
+    pub fn get_method(&self) -> reqwest::Method {
+        match self.method {
+            Method::Options => reqwest::Method::OPTIONS,
+            Method::Get => reqwest::Method::GET,
+            Method::Post => reqwest::Method::POST,
+            Method::Put => reqwest::Method::PUT,
+            Method::Delete => reqwest::Method::DELETE,
+            Method::Head => reqwest::Method::HEAD,
+            Method::Trace => reqwest::Method::TRACE,
+            Method::Connect => reqwest::Method::CONNECT,
+            Method::Patch => reqwest::Method::PATCH,
+        }
+    }
+
+    pub fn get_header_map<'a>(&self) -> HeaderMap {
+        let mut hm = HeaderMap::new();
+
+        for header in &self.headers {
+            let header = header.chars()
+                .filter(|it| !it.is_whitespace())
+                .collect::<String>();
+
+            let split = header.split(":")
+                .map(|it| it.to_string())
+                .collect::<Vec<String>>();
+
+            if split.len() != 2 {
+                error!("There were more then 2 parts of this header {}", header)
+            }
+            let key = HeaderName::from_str(split.get(0).unwrap())
+                .expect("Invalid Header name");
+            let value = HeaderValue::from_str(  split.get(1).unwrap())
+                .expect("Invalid Header value");
+
+            hm.insert(key, value);
+        }
+
+        return hm;
+    }
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, ArgEnum, Debug)]
 pub enum ChronoUnit {
     Second,
     Minute,
-    Hour
+    Hour,
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, ArgEnum, Debug)]
+pub enum Method {
+    Options,
+    Get,
+    Post,
+    Put,
+    Delete,
+    Head,
+    Trace,
+    Connect,
+    Patch,
+}
