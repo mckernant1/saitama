@@ -5,6 +5,7 @@ use simplelog::{ColorChoice, CombinedLogger, Config, TermLogger, TerminalMode};
 
 mod args;
 mod punch;
+mod util;
 
 fn main() {
     let args: Cli = Cli::parse();

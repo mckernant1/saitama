@@ -7,7 +7,7 @@ pub fn handle_output(
     loop {
         match output_recv.recv().unwrap() {
             Some(request_data) => {
-                println!("{}", request_data.to_csv_string())
+                // println!("{}", request_data.to_csv_string())
             }
             None => {
                 break;

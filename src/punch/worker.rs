@@ -1,6 +1,8 @@
+use std::error::Error;
 use std::str::FromStr;
 use chrono::Utc;
-use crossbeam::channel::{Receiver, Sender};
+use crossbeam::channel::{Receiver, Sender, SendError};
+use log::error;
 use reqwest::blocking::Client;
 use reqwest::Url;
 use crate::Punch;
@@ -9,6 +11,7 @@ use crate::punch::request_record::RequestRecord;
 pub struct Worker {
     work_recv: Receiver<bool>,
     output_send: Sender<Option<RequestRecord>>,
+    feedback_send: Sender<bool>,
     punch: Punch
 }
 
@@ -16,11 +19,13 @@ impl Worker {
     pub fn new(
         work_recv: Receiver<bool>,
         output_send: Sender<Option<RequestRecord>>,
+        feedback_send: Sender<bool>,
         punch: Punch
     ) -> Worker {
         Worker {
             work_recv,
             output_send,
+            feedback_send,
             punch
         }
     }
@@ -46,7 +51,14 @@ impl Worker {
                 b.status().as_u16(),
                 b.text().unwrap()
             );
-            self.output_send.send(Some(rr)).expect("Failed to send output")
+            self.output_send.send(Some(rr)).expect("Failed to send output");
+            match self.feedback_send.send(true) {
+                Ok(_) => {}
+                Err(e) => {
+                    dbg!(e.source());
+                    error!("{}", e);
+                }
+            }
         }
     }
 

@@ -26,10 +26,12 @@ pub fn punch(punch: Punch) {
         .map(|i| {
             let work_recv = work_recv.clone();
             let output_send = output_send.clone();
+            let feedback_send = feedback_send.clone();
             let punch = punch.clone();
             let worker = Worker::new(
                 work_recv,
                 output_send,
+                feedback_send,
                 punch
             );
             thread::Builder::new()
