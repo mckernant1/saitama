@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::str::FromStr;
 use chrono::Utc;
-use crossbeam::channel::{Receiver, Sender, SendError};
+use crossbeam::channel::{Receiver, Sender};
 use log::error;
 use reqwest::blocking::Client;
 use reqwest::Url;
@@ -57,6 +57,7 @@ impl Worker {
                 Err(e) => {
                     dbg!(e.source());
                     error!("{}", e);
+                    panic!("{}", e)
                 }
             }
         }

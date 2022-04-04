@@ -43,8 +43,8 @@ pub fn punch(punch: Punch) {
 
     info!("Starting orchestrator thread");
     let orchestrator = Orchestrator::new(
-        work_send,
-        feedback_recv,
+        work_send.clone(),
+        feedback_recv.clone(),
         punch
     );
     let orchestrator_thread = thread::Builder::new()
@@ -55,9 +55,13 @@ pub fn punch(punch: Punch) {
     for x in worker_threads {
         x.join().expect("Could not join worker thread")
     }
+    output_send.send(None).unwrap();
     orchestrator_thread
         .join()
         .expect("Could not join orchestrator thread");
-    output_send.send(None).unwrap();
+
     output_thread.join().unwrap();
+    drop(feedback_recv);
+    drop(work_send);
+    drop(output_send);
 }

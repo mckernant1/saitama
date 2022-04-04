@@ -22,7 +22,7 @@ impl<T> CountReceiveChannel<T> for Receiver<T> {
     fn count_recvs_until_empty(&self) -> i64 {
         let mut counter = 0;
         while !self.is_empty() {
-            self.recv();
+            self.recv().unwrap();
             counter += 1;
         }
         return counter;
