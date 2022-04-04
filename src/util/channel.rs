@@ -1,6 +1,5 @@
 use chrono::{Duration, Utc};
 use crossbeam::channel::Receiver;
-use log::debug;
 
 pub trait CountReceiveChannel<T> {
     fn count_recvs_over_duration(&self, duration: Duration) -> i32;

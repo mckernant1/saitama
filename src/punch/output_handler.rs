@@ -1,4 +1,4 @@
-use crossbeam::channel::{Receiver, RecvError};
+use crossbeam::channel::{Receiver};
 use log::info;
 use crate::punch::request_record::RequestRecord;
 
