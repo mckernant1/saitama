@@ -10,10 +10,9 @@ use crate::punch::worker::Worker;
 
 
 pub fn punch(punch: Punch) {
-    let (work_send, work_recv) = channel::bounded::<bool>(50);
-    let (output_send, output_recv) = channel::bounded::<Option<RequestRecord>>(50);
-
-    let (feedback_send, feedback_recv) = channel::bounded(50);
+    let (work_send, work_recv) = channel::bounded::<bool>(1);
+    let (output_send, output_recv) = channel::unbounded::<Option<RequestRecord>>();
+    let (feedback_send, feedback_recv) = channel::unbounded();
 
     info!("Starting {} worker threads", punch.thread_count);
 
