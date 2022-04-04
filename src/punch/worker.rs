@@ -1,8 +1,6 @@
-use std::error::Error;
 use std::str::FromStr;
 use chrono::Utc;
 use crossbeam::channel::{Receiver, Sender};
-use log::error;
 use reqwest::blocking::Client;
 use reqwest::Url;
 use crate::Punch;
@@ -52,14 +50,7 @@ impl Worker {
                 b.text().unwrap()
             );
             self.output_send.send(Some(rr)).expect("Failed to send output");
-            match self.feedback_send.send(true) {
-                Ok(_) => {}
-                Err(e) => {
-                    dbg!(e.source());
-                    error!("{}", e);
-                    panic!("{}", e)
-                }
-            }
+            self.feedback_send.send(true).expect("Failed to send feedback");
         }
     }
 
