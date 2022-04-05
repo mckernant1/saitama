@@ -21,8 +21,8 @@ impl RequestRecord {
     pub fn to_csv_string(&self) -> String {
         format!(
             "timestamp='{:?}',latency='{:?}',status='{}',body='{}'",
-            self.timestamp,
-            self.latency.to_string(),
+            self.timestamp.timestamp(),
+            self.latency.num_nanoseconds(),
             self.response_code,
             self.response_body
         )
