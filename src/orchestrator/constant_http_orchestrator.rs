@@ -1,13 +1,13 @@
-use std::{time};
-use std::thread::sleep;
+use crate::args::args::Punch;
+use crate::orchestrator::orchestrator::Orchestrator;
+use crate::util::channel::CountReceiveChannel;
 use chrono::{Duration, Utc};
 use crossbeam::channel::{Receiver, Sender};
 use log::{debug, info};
-use crate::Punch;
-use crate::util::CountReceiveChannel;
+use std::thread::sleep;
+use std::time;
 
-
-pub struct Orchestrator {
+pub struct ConstantHttpOrchestrator {
     work_send: Sender<bool>,
     feedback_recv: Receiver<bool>,
     thread_count: u16,
@@ -15,13 +15,21 @@ pub struct Orchestrator {
     rps: u64,
 }
 
-impl Orchestrator {
-    pub fn new(
+impl ConstantHttpOrchestrator {
+    fn get_sleep_between(&self, elapsed_time: Duration, hits: i64) -> Duration {
+        let interval = Duration::seconds(1).num_nanoseconds().unwrap() / self.rps as i64;
+        let delta = Duration::nanoseconds((hits + 1) * interval);
+        return delta - elapsed_time;
+    }
+}
+
+impl Orchestrator<Punch> for ConstantHttpOrchestrator {
+    fn new(
         work_send: Sender<bool>,
         feedback_recv: Receiver<bool>,
         punch: Punch,
-    ) -> Orchestrator {
-        Orchestrator {
+    ) -> ConstantHttpOrchestrator {
+        ConstantHttpOrchestrator {
             work_send,
             feedback_recv,
             thread_count: punch.thread_count,
@@ -30,18 +38,7 @@ impl Orchestrator {
         }
     }
 
-    fn get_sleep_between(
-        &self,
-        elapsed_time: Duration,
-        hits: i64,
-    ) -> Duration {
-        let interval = Duration::seconds(1).num_nanoseconds().unwrap() / self.rps as i64;
-        let delta = Duration::nanoseconds((hits + 1) * interval);
-        return delta - elapsed_time;
-    }
-
-
-    pub fn start(&self) {
+    fn start(&self) {
         let start = Utc::now();
         info!("Starting at {}", start);
         let mut recv_counter = 0_i64;
@@ -49,10 +46,14 @@ impl Orchestrator {
 
         while Utc::now() < start + self.duration {
             recv_counter += feedback_recv.count_recvs_until_empty();
-            sleep(self.get_sleep_between(Utc::now() - start, recv_counter)
-                .to_std()
-                .unwrap_or(time::Duration::from_nanos(0)));
-            self.work_send.send(true).expect("Could not send work to worker");
+            sleep(
+                self.get_sleep_between(Utc::now() - start, recv_counter)
+                    .to_std()
+                    .unwrap_or(time::Duration::from_nanos(0)),
+            );
+            self.work_send
+                .send(true)
+                .expect("Could not send work to worker");
         }
 
         debug!("Sending stop signal to threads");
@@ -63,5 +64,3 @@ impl Orchestrator {
         }
     }
 }
-
-

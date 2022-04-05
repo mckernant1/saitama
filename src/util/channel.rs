@@ -6,7 +6,6 @@ pub trait CountReceiveChannel<T> {
     fn count_recvs_until_empty(&self) -> i64;
 }
 
-
 impl<T> CountReceiveChannel<T> for Receiver<T> {
     fn count_recvs_over_duration(&self, duration: Duration) -> i32 {
         let start = Utc::now();

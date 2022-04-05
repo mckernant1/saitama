@@ -1,11 +1,16 @@
-use crate::args::{Cli, Commands, Punch};
+use crate::args::args::{Cli, Commands};
 use clap::Parser;
-use log::{debug};
+use commands::punch;
+use log::debug;
 use simplelog::{ColorChoice, CombinedLogger, Config, TermLogger, TerminalMode};
 
 mod args;
-mod punch;
+mod commands;
+mod model;
+mod orchestrator;
+mod output;
 mod util;
+mod worker;
 
 fn main() {
     let args: Cli = Cli::parse();

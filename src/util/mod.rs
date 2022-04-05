@@ -1,3 +1,1 @@
-mod channel;
-
-pub use channel::CountReceiveChannel;
+pub mod channel;

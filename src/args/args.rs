@@ -1,8 +1,8 @@
-use std::str::FromStr;
-use chrono::{Duration};
+use chrono::Duration;
 use clap::{ArgEnum, Args, Parser, Subcommand};
 use log::error;
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
+use std::str::FromStr;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -83,21 +83,21 @@ impl Punch {
         let mut hm = HeaderMap::new();
 
         for header in &self.headers {
-            let header = header.chars()
+            let header = header
+                .chars()
                 .filter(|it| !it.is_whitespace())
                 .collect::<String>();
 
-            let split = header.split(":")
+            let split = header
+                .split(":")
                 .map(|it| it.to_string())
                 .collect::<Vec<String>>();
 
             if split.len() != 2 {
                 error!("There were more then 2 parts of this header {}", header)
             }
-            let key = HeaderName::from_str(split.get(0).unwrap())
-                .expect("Invalid Header name");
-            let value = HeaderValue::from_str(  split.get(1).unwrap())
-                .expect("Invalid Header value");
+            let key = HeaderName::from_str(split.get(0).unwrap()).expect("Invalid Header name");
+            let value = HeaderValue::from_str(split.get(1).unwrap()).expect("Invalid Header value");
 
             hm.insert(key, value);
         }

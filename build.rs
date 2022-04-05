@@ -1,11 +1,10 @@
 #![allow(dead_code)]
 extern crate clap;
 
-use std::fs;
-use clap_complete::{Shell, generate_to};
-use crate::clap::CommandFactory;
 use crate::args::Cli;
-
+use crate::clap::CommandFactory;
+use clap_complete::{generate_to, Shell};
+use std::fs;
 
 #[path = "src/args/args.rs"]
 mod args;
