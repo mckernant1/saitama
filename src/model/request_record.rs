@@ -8,14 +8,14 @@ pub struct RequestRecord {
     pub timestamp: DateTime<Utc>,
 }
 
-impl Into<String> for RequestRecord {
-    fn into(self) -> String {
+impl From<RequestRecord> for String {
+    fn from(r: RequestRecord) -> Self {
         format!(
             "timestamp='{:?}',latency='{:?}',status='{}',body='{}'",
-            self.timestamp.timestamp(),
-            self.latency.num_nanoseconds(),
-            self.response_code,
-            self.response_body
+            r.timestamp.timestamp(),
+            r.latency.num_nanoseconds(),
+            r.response_code,
+            r.response_body
         )
     }
 }
