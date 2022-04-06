@@ -39,7 +39,7 @@ impl Worker<Request, RequestRecord> for HttpWorker {
         {
             let start = Utc::now();
             let b = c
-                .execute(r.try_clone().expect("Could not clone request"))
+                .execute(self.request.try_clone().expect("Could not clone request"))
                 .expect("Http Request failure");
             let latency = Utc::now() - start;
             let rr = RequestRecord::new(latency, b.status().as_u16(), b.text().unwrap());
