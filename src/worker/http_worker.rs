@@ -1,11 +1,11 @@
-use crate::model::http_config::HttpLoadConfig;
+
 use crate::model::request_record::RequestRecord;
 use crate::worker::worker::Worker;
 use chrono::Utc;
 use crossbeam::channel::{Receiver, Sender};
 use reqwest::blocking::{Client, Request};
-use reqwest::Url;
-use std::str::FromStr;
+
+
 
 pub struct HttpWorker {
     work_recv: Receiver<bool>,
