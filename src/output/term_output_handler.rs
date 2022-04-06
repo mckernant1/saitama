@@ -11,7 +11,7 @@ impl OutputHandler<RequestRecord> for TermOutputHandler {
         loop {
             match output_recv.recv().unwrap() {
                 Some(request_data) => {
-                    println!("{}", request_data.to_csv_string())
+                    println!("{}", request_data.into())
                 }
                 None => {
                     break;
