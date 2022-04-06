@@ -11,7 +11,6 @@ serde = "1.0.136"
 log = "0.4.16"
 simplelog = "0.11.2"
 reqwest = { version = "0.11.10", features = ["blocking", "json"] }
-clap-verbosity-flag = "1.0.0"
 
 [dependencies]
 crossbeam = "0.8.1"
@@ -20,4 +19,3 @@ serde = "1.0.136"
 log = "0.4.16"
 simplelog = "0.11.2"
 reqwest = { version = "0.11.10", features = ["blocking", "json"] }
-clap-verbosity-flag = "1.0.0"
