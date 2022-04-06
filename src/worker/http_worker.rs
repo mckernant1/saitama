@@ -1,11 +1,8 @@
-
 use crate::model::request_record::RequestRecord;
 use crate::worker::worker::Worker;
 use chrono::Utc;
 use crossbeam::channel::{Receiver, Sender};
 use reqwest::blocking::{Client, Request};
-
-
 
 pub struct HttpWorker {
     work_recv: Receiver<bool>,

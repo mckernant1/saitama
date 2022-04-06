@@ -33,7 +33,7 @@ impl Orchestrator<HttpLoadConfig> for ConstantHttpOrchestrator {
             work_send,
             feedback_recv,
             thread_count: http_config.thread_count,
-            duration: http_config.get_chrono_duration(),
+            duration: http_config.duration,
             rps: http_config.rps,
         }
     }
