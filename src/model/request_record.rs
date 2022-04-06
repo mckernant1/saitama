@@ -1,22 +1,22 @@
+use chrono::serde::ts_milliseconds;
 use chrono::{DateTime, Duration, Utc};
+use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
 
-#[derive(Clone)]
+#[serde_with::serde_as]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RequestRecord {
+    #[serde_as(as = "serde_with::DurationNanoSeconds<i64>")]
     pub latency: Duration,
     pub response_code: u16,
     pub response_body: String,
+    #[serde(with = "ts_milliseconds")]
     pub timestamp: DateTime<Utc>,
 }
 
 impl From<RequestRecord> for String {
     fn from(r: RequestRecord) -> Self {
-        format!(
-            "timestamp='{:?}',latency='{:?}',status='{}',body='{}'",
-            r.timestamp.timestamp(),
-            r.latency.num_nanoseconds(),
-            r.response_code,
-            r.response_body
-        )
+        serde_json::to_string(&r).expect("Could not convert json")
     }
 }
 
