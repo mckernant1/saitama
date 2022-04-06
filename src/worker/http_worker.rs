@@ -1,43 +1,36 @@
+use crate::model::http_config::HttpLoadConfig;
 use crate::model::request_record::RequestRecord;
 use crate::worker::worker::Worker;
 use chrono::Utc;
 use crossbeam::channel::{Receiver, Sender};
-use reqwest::blocking::Client;
+use reqwest::blocking::{Client, Request};
 use reqwest::Url;
 use std::str::FromStr;
-use crate::model::http_config::HttpRequestConfig;
 
 pub struct HttpWorker {
     work_recv: Receiver<bool>,
     output_send: Sender<Option<RequestRecord>>,
     feedback_send: Sender<bool>,
-    http_config: HttpRequestConfig,
+    request: Request,
 }
 
-impl Worker<HttpRequestConfig, RequestRecord> for HttpWorker {
+impl Worker<Request, RequestRecord> for HttpWorker {
     fn new(
         work_recv: Receiver<bool>,
         output_send: Sender<Option<RequestRecord>>,
         feedback_send: Sender<bool>,
-        http_config: HttpRequestConfig,
+        request: Request,
     ) -> HttpWorker {
         HttpWorker {
             work_recv,
             output_send,
             feedback_send,
-            http_config,
+            request,
         }
     }
 
     fn start(&self) {
         let c = Client::new();
-        let url = Url::from_str(self.http_config.url.as_str()).expect("Could not parse Url");
-        let r = c
-            .request(self.http_config.get_method(), url)
-            .body(self.http_config.body.clone())
-            .headers(self.http_config.get_header_map())
-            .build()
-            .expect("Could not create request");
 
         while self
             .work_recv

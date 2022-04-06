@@ -1,3 +1,4 @@
+use crate::model::http_config::HttpLoadConfig;
 use crate::orchestrator::orchestrator::Orchestrator;
 use crate::util::channel::CountReceiveChannel;
 use chrono::{Duration, Utc};
@@ -5,7 +6,6 @@ use crossbeam::channel::{Receiver, Sender};
 use log::{debug, info};
 use std::thread::sleep;
 use std::time;
-use crate::model::http_config::HttpRequestConfig;
 
 pub struct ConstantHttpOrchestrator {
     work_send: Sender<bool>,
@@ -23,17 +23,17 @@ impl ConstantHttpOrchestrator {
     }
 }
 
-impl Orchestrator<HttpRequestConfig> for ConstantHttpOrchestrator {
+impl Orchestrator<HttpLoadConfig> for ConstantHttpOrchestrator {
     fn new(
         work_send: Sender<bool>,
         feedback_recv: Receiver<bool>,
-        http_config: HttpRequestConfig,
+        http_config: HttpLoadConfig,
     ) -> ConstantHttpOrchestrator {
         ConstantHttpOrchestrator {
             work_send,
             feedback_recv,
             thread_count: http_config.thread_count,
-            duration: http_config.get_duration(),
+            duration: http_config.get_chrono_duration(),
             rps: http_config.rps,
         }
     }
