@@ -1,9 +1,9 @@
 use crate::model::http_config::HttpLoadConfig;
 use crate::orchestrator::orchestrator::Orchestrator;
-use crate::util::channel::CountReceiveChannel;
 use chrono::{Duration, Utc};
 use crossbeam::channel::{Receiver, Sender};
 use log::{debug, info};
+use mckernant1_tools::crossbeam::collect::Collectable;
 use std::thread::sleep;
 use std::time;
 
@@ -45,7 +45,7 @@ impl Orchestrator<HttpLoadConfig> for ConstantHttpOrchestrator {
         let feedback_recv = self.feedback_recv.clone();
 
         while Utc::now() < start + self.duration {
-            recv_counter += feedback_recv.count_recvs_until_empty();
+            recv_counter += feedback_recv.count_until_empty();
             sleep(
                 self.get_sleep_between(Utc::now() - start, recv_counter)
                     .to_std()

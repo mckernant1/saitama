@@ -465,6 +465,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3e378b66a060d48947b590737b30a1be76706c8dd7b8ba0f2fe3989c68a853f"
 
 [[package]]
+name = "mckernant1-tools"
+version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a96ee882ed2fd3ab4c74755fd18b9ac777ccc3a665838025930a1a022f7b6b2"
+dependencies = [
+ "chrono",
+ "crossbeam",
+]
+
+[[package]]
 name = "memchr"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -713,11 +723,12 @@ checksum = "73b4b750c782965c211b42f022f59af1fbceabdd026623714f104152f1ec149f"
 
 [[package]]
 name = "saitama"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "chrono",
  "crossbeam",
  "log",
+ "mckernant1-tools",
  "reqwest",
  "serde",
  "serde_json",
