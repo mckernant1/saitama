@@ -2,8 +2,9 @@ use chrono::serde::ts_milliseconds;
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+use std::fmt::{Display, Formatter};
 
-#[serde_with::serde_as]
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RequestRecord {
     #[serde_as(as = "serde_with::DurationNanoSeconds<i64>")]
@@ -14,9 +15,13 @@ pub struct RequestRecord {
     pub timestamp: DateTime<Utc>,
 }
 
-impl From<RequestRecord> for String {
-    fn from(r: RequestRecord) -> Self {
-        serde_json::to_string(&r).expect("Could not convert json")
+impl Display for RequestRecord {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            serde_json::to_string(self).expect("Could not convert json")
+        )
     }
 }
 
