@@ -1,6 +1,10 @@
+use crate::traits::config::Config;
 use crossbeam::channel::{Receiver, Sender};
 
-pub trait Worker<C, R> {
+pub trait Worker<C, R>
+where
+    C: Config,
+{
     fn start(
         work_recv: Receiver<bool>,
         output_send: Sender<Option<R>>,

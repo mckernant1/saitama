@@ -1,19 +1,28 @@
-use crate::model::request_record::RequestRecord;
-use crate::worker::worker::Worker;
+use crate::impls::request_record::RequestRecord;
+use crate::traits::config::Config;
+use crate::traits::worker::Worker;
 use chrono::Utc;
 use crossbeam::channel::{Receiver, Sender};
 use reqwest::blocking::{Client, Request};
 
+pub trait HttpWorkerConfig: Config {
+    fn create_request(&self) -> Request;
+}
+
 pub struct HttpWorker;
 
-impl Worker<Request, RequestRecord> for HttpWorker {
+impl<C> Worker<C, RequestRecord> for HttpWorker
+where
+    C: HttpWorkerConfig,
+{
     fn start(
         work_recv: Receiver<bool>,
         output_send: Sender<Option<RequestRecord>>,
         feedback_send: Sender<bool>,
-        request: Request,
+        config: C,
     ) {
         let c = Client::new();
+        let request = config.create_request();
 
         while work_recv.recv().expect("Could not receive from channel") {
             let start = Utc::now();
