@@ -571,9 +571,9 @@ checksum = "a3e378b66a060d48947b590737b30a1be76706c8dd7b8ba0f2fe3989c68a853f"
 
 [[package]]
 name = "mckernant1-tools"
-version = "0.0.5"
+version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c640435e212161c64363c1d3a75dfd5db64e50acc6a14fec02b0e57f39222b2"
+checksum = "c208197ea657a8c220bc1017a7988cfbd0009bd91b3014c20b9406b9b89500b8"
 dependencies = [
  "chrono",
  "crossbeam",
@@ -824,7 +824,7 @@ checksum = "f3f6f92acf49d1b98f7a81226834412ada05458b7364277387724a237f062695"
 
 [[package]]
 name = "saitama"
-version = "0.0.9"
+version = "0.0.10"
 dependencies = [
  "chrono",
  "crossbeam",
