@@ -1,3 +1,2 @@
-use std::fmt::Debug;
 
-pub trait Config: Clone + Debug {}
+pub trait Config: Clone {}
